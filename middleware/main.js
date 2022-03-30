@@ -31,7 +31,6 @@ module.exports = {
         const {username} = req.session;
         const item = await auctionItemModel.findOne({_id: id});
         const bidder = await auctionUserModel.findOne({username});
-        console.log(Number(bid), item.currentPrice, bidder.money)
         if (Number(bid) <= item.currentPrice || bidder.money < Number(bid)) {
             return res.send({success: false, message: "Your bid is to low and/or you don't have enough money"});
         }
