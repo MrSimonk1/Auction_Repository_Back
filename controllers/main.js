@@ -12,9 +12,7 @@ module.exports = {
             user.username = username;
             user.password = hash;
 
-            user.save().then(res => {
-                console.log("user saved")
-            })
+            user.save();
 
             return res.send({success: true, message: "Registered"})
         }
@@ -22,14 +20,12 @@ module.exports = {
     },
     login: async (req, res) => {
         const {username, password} = req.body;
-        console.log(username, password);
 
         const findUser = await auctionUserModel.findOne({username: username});
         if (findUser) {
             const compared = await bcrypt.compare(password, findUser.password);
             if (compared) {
                 req.session.username = username;
-                console.log(req.session.username);
                 return res.send({success: true, message: "Logged in", findUser})
             }
         }
@@ -41,7 +37,6 @@ module.exports = {
     },
     create: (req, res) => {
         const {username} = req.session
-        console.log(username)
         const {img, title, price, duration} = req.body;
 
         const item = new auctionItemModel;
@@ -51,11 +46,8 @@ module.exports = {
         item.startPrice = price;
         item.currentPrice = price;
         item.endTime = Date.now() + Number(duration);
-        console.log(Date.now(), Date.now() + Number(duration))
 
-        item.save().then(res => {
-            console.log("Item saved")
-        })
+        item.save();
         res.send({success: true, message: "Created"})
     },
     getAll: async (req, res) => {
@@ -94,7 +86,6 @@ module.exports = {
             currentBidder.money += Number(latestBidder.price);
             await auctionUserModel.replaceOne({username: latestBidder.username}, currentBidder, {new: true})
             const bidder = await auctionUserModel.findOne({username: username});
-            console.log(bidder, currentBidder, latestBidder);
             bidder.money -= Number(bid);
             item.bids.unshift(bidInfo);
             item.currentPrice = Number(bid);
